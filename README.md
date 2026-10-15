@@ -6,7 +6,7 @@ Linux desktop over Bluetooth Low Energy — scan, connect, complete the
 encrypted handshake, list and download recordings, and decrypt the result to
 playable audio — without the vendor's app, subscriptions, or cloud lock-in.
 
-> Part of the **[Hardware Liberation Army](https://github.com/…)** effort to
+> Part of the **[Hardware Liberation Army](https://github.com/hardware-liberation-army)** effort to
 > own our hardware again. No subscriptions. No e-waste. Forward, comrades.
 
 ---
