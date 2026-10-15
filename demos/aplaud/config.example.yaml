@@ -1,0 +1,53 @@
+# Plaud cloud API credentials (fill in from your Plaud account / docs/key-acquisition.md)
+api_token: "<your_jwt_token>"
+sdk_app_key: "plaud-<your-app-key>"
+sdk_app_secret: "aksk_<your-app-secret>"
+
+# Device identity
+device_sn: "<your-device-sn>"
+sn_signature_b64: "<base64 sn signature from /device/sn-sign>"
+
+# RSA keys (BLE transport session key exchange)
+rsa_private_key_pem: |
+  -----BEGIN PRIVATE KEY-----
+  ...
+  -----END PRIVATE KEY-----
+
+# E2EE key for file decryption (separate RSA key fetched from /e2ee/gen_key)
+e2ee_rsa_key_path: ~/.config/aplaud/plaud_rsa_key
+
+# SDK token cache
+sdk_token_cache_path: ~/.config/aplaud/sdk_token_cache.json
+
+# Output directory for downloaded recordings
+download_dir: ~/Recordings/Plaud
+
+# BLE scan
+ble_scan_duration: 10
+
+# Whisper transcription
+whisper:
+  model_path: ~/.config/aplaud/ggml-base.en.bin
+  language: en
+  whisper_cli_path: whisper-cli
+  # CGo library paths (if not in system lib path)
+  lib_path: /var/home/lvturner/Documents/Code/3rdParty/whisper.cpp/build/src
+  ggml_lib_path: /var/home/lvturner/Documents/Code/3rdParty/whisper.cpp/build/ggml/src
+  # Voice Activity Detection — skip transcription for silent/non-speech audio
+  vad: true
+  vad_model_path: ~/plaud_re/aplaud/whisper.cpp/models/for-tests-silero-v6.2.0-ggml.bin
+  # vad_threshold: "0.50"  # higher = more aggressive filtering (default 0.50)
+
+# TUI settings
+tui:
+  poll_interval: 300        # seconds between auto-sync checks (default 5 min)
+  auto_sync: true           # enable auto-sync on connect
+  auto_reconnect: true      # reconnect on disconnect
+  editor: ""                # external editor (default: $EDITOR or vi)
+
+# LLM summary generation
+llm:
+  provider: deepseek        # "deepseek" (default), "openai", or any OpenAI-compatible endpoint
+  api_key: ""               # required - your API key
+  model: deepseek-chat      # model to use (default varies by provider)
+  # base_url: ""            # optional override for API endpoint

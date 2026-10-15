@@ -1,0 +1,10 @@
+# Core BLE transport / device communication
+bleak
+# ChaCha20-Poly1305 (BLE session) and RSA (key exchange) primitives
+cryptography
+# Plaud Cloud API HTTP calls
+requests
+# Opus decode (AVC/OPUS recordings -> PCM)
+opuslib
+# Numeric helpers used by the Opus decoder
+numpy

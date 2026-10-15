@@ -1,0 +1,79 @@
+Hardware Liberation License (HLL)
+Version 1.0
+
+Copyright (c) 2026 Hardware Liberation Army
+
+--------------------------------------------------------------------------------
+PREAMBLE
+--------------------------------------------------------------------------------
+
+This project is released in the spirit of the Hardware Liberation Army:
+
+    We have put up with locked-down hardware that we don't own for long enough.
+    Hardware with software so locked-down, subscription-bound, or dumpster-bound
+    that the effort to open it never seemed worth it. No more.
+
+    Our goal is interoperability and our own hardware back: to read our own
+    recordings, to use our own devices, to stop paying rent on things we bought,
+    and to turn would-be e-waste back into tools we control.
+
+This license exists so that reverse-engineered protocols and the tools that
+implement them can be shared, studied, and improved by anyone - and so that
+the work of opening up hardware is never again gated behind effort that isn't
+"worth it."
+
+--------------------------------------------------------------------------------
+TERMS AND CONDITIONS
+--------------------------------------------------------------------------------
+
+The software, documentation, and reverse-engineered protocol information in
+this repository (the "Work") are provided under the following terms.
+
+1. GRANT OF RIGHTS
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this Work, to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Work, and to permit persons to whom the Work is
+   furnished to do so, subject to the conditions below.
+
+2. ATTRIBUTION
+
+   Redistributions of the Work, in whole or in part, whether in source or
+   binary form, must retain the above copyright notice, this list of
+   conditions, and the following disclaimer. Modified versions must be clearly
+   marked as modified, and must not be misrepresented as the original work.
+
+3. PURPOSE AND ANTI-LOCKDOWN CLAUSE
+
+   This Work is intended to enable interoperability, user ownership, and the
+   repair or reuse of hardware. You may not use this Work, or any derivative
+   of it, to further restrict a user's control over hardware they own - for
+   example by locking it down, disabling interoperability, or imposing new
+   subscription or access requirements.
+
+4. NO WARRANTY
+
+   THIS WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+   THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+   FROM, OUT OF, OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+   IN THE WORK.
+
+--------------------------------------------------------------------------------
+THIRD-PARTY MATERIAL
+--------------------------------------------------------------------------------
+
+This repository may contain third-party material that is subject to its own
+licenses, including:
+
+  - The official Plaud SDK under `third_party/plaud-sdk-public/` (proprietary).
+  - Device firmware images under `third_party/firmware/` (proprietary).
+
+Such material is included for reference and interoperability research only and
+is NOT covered by this license. See `third_party/NOTICE.md` for details.
+
+--------------------------------------------------------------------------------
+    FORWARD COMRADES
+--------------------------------------------------------------------------------

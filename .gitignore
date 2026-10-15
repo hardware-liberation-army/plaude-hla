@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local credentials/secrets (never commit these)
+.env
+.env.*
+*.env
+!config.example.yaml
+.plaud_rsa_key
+.plaud_rsa_key.bak.*
+.sdk_token_cache.json
+*.pem
+!**/config.example.yaml
+
+# Downloaded recordings / build artifacts
+Recordings/
+plaud_downloads/
+plaud_cloud_downloads/
+
+# Go demo app build output
+demos/aplaud/aplaud
+demos/aplaud/whisper.cpp/
+
+# Archived / superseded implementation (kept on disk, excluded from release)
+archive/
+
+# Third-party vendored repos keep their own git history
+third_party/plaud-sdk-public/

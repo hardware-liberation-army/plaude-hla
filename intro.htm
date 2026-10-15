@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HLA // intro.htm</title>
+<style>
+  /* ============================================================
+     Pastel palette (pastel-dominant background)
+     ============================================================ */
+  :root{
+    --bg-1:#fff6e8;           /* cream   */
+    --bg-2:#ffd6e8;           /* pink    */
+    --bg-3:#d9ccff;           /* lilac   */
+    --bg-4:#c9f2dc;           /* mint    */
+    --bg-5:#ffdbc4;           /* peach   */
+    --ink:#5b4a78;            /* muted plum text  */
+    --ink-soft:#8a7ba6;       /* softer text      */
+    --accent:#ff8fc7;         /* pink accent      */
+    --accent-2:#9a8cff;       /* lilac accent     */
+    --accent-3:#63d6a7;       /* mint accent      */
+    --panel:#fffdf8;          /* panel bg         */
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{ height:100%; overflow:hidden; }
+
+  body{
+    font-family: "DejaVu Sans Mono","Cascadia Mono","Consolas",monospace;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 800px at 15% 15%, var(--bg-2), transparent 60%),
+      radial-gradient(1000px 700px at 85% 20%, var(--bg-3), transparent 60%),
+      radial-gradient(1100px 800px at 20% 85%, var(--bg-4), transparent 60%),
+      radial-gradient(1000px 700px at 80% 80%, var(--bg-5), transparent 60%),
+      linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    animation: bgdrift 18s ease-in-out infinite alternate;
+  }
+  @keyframes bgdrift{
+    0%{ background-position:0% 0%,100% 0%,0% 100%,100% 100%,0% 0%; }
+    100%{ background-position:10% 10%,90% 15%,15% 90%,85% 85%,100% 100%; }
+  }
+
+  #root{
+    position:relative; height:100%;
+    display:grid; grid-template-rows:1fr 2fr 1fr;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:8px 8px 10px; z-index:2; gap:4px;
+    background:linear-gradient(180deg, rgba(255,253,248,.85), rgba(255,253,248,.25));
+    border-bottom:3px solid color-mix(in srgb, var(--accent-2) 55%, transparent);
+    box-shadow:0 6px 16px rgba(91,74,120,.12);
+  }
+  header .hla{
+    font-size:clamp(22px,5vw,46px); font-weight:800; letter-spacing:.5em;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter: drop-shadow(0 2px 6px rgba(154,140,255,.45));
+    animation:hue 6s linear infinite;
+  }
+  @keyframes hue{ to{ filter:hue-rotate(360deg) drop-shadow(0 2px 6px rgba(154,140,255,.45)); } }
+  header .sub{
+    margin-top:2px; font-size:clamp(11px,1.6vw,15px); color:var(--ink-soft);
+    letter-spacing:.35em; text-transform:uppercase;
+  }
+
+  /* ---------- Main nfo stage ---------- */
+  main{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    padding:10px 4%; min-height:0; z-index:1;
+  }
+  #stage{
+    background:var(--panel);
+    border:2px solid color-mix(in srgb, var(--accent-2) 45%, transparent);
+    border-radius:14px;
+    box-shadow:0 10px 30px rgba(91,74,120,.18),
+               inset 0 0 40px rgba(201,242,220,.35);
+    padding:22px 26px; max-width:96%; max-height:100%;
+    overflow:auto;
+  }
+  #nfo{
+    white-space:pre; line-height:1.18; color:var(--ink);
+    text-shadow:0 1px 0 rgba(255,255,255,.6);
+  }
+
+  /* ---------- Footer : sine scroller ---------- */
+  footer{
+    z-index:2; display:flex; flex-direction:column; align-items:stretch;
+    justify-content:flex-end;
+    background:linear-gradient(0deg, rgba(255,246,232,.96), rgba(255,253,248,.55));
+    border-top:3px solid color-mix(in srgb, var(--accent-2) 55%, transparent);
+    box-shadow:0 -6px 16px rgba(91,74,120,.12);
+    padding:6px 6px 4px;
+  }
+  #scrollWrap{ flex:1; min-height:44px; display:block; }
+  #scroller{ display:block; width:100%; height:100%; }
+  #fx{ position:absolute; z-index:50; pointer-events:none; }
+</style>
+</head>
+<body>
+<div id="root">
+  <header>
+    <div class="hla">HARDWARE LIBERATION ARMY</div>
+    <br />
+    <div class="sub">HLA proudly presents</div>
+  </header>
+
+  <main>
+    <div id="stage"><pre id="nfo"></pre></div>
+  </main>
+
+  <footer>
+    <div id="scrollWrap"><canvas id="scroller"></canvas></div>
+  </footer>
+</div>
+
+<canvas id="fx"></canvas>
+
+<script>
+/* ============================================================
+   Pastel palette (single source of truth for theming)
+   ============================================================ */
+const PALETTE = {
+  fade: ["#fff6e8", "#ffd6e8", "#d9ccff", "#c9f2dc", "#ffdbc4"],   // pixel-fade cell colors
+  text: "#5b4a78",
+  accent: ["#ff8fc7", "#9a8cff", "#63d6a7"],
+};
+
+/* Pixel-dissolve pacing. */
+const FADE = {
+  speed: 18,    // grid cells filled/cleared per frame — HIGHER = faster fade
+  size:  42,    // pixel cell size = panelWidth / this (LOWER = chunkier pixels)
+};
+
+/* ============================================================
+   Scenes. Add a new entry (or file) here for each .nfo.
+   ============================================================ */
+const scenes = [
+  {
+    title: "MANIFEST",
+    nfo:
+`╭─[Manifesto]──────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│ ▟█  ██ ▟█    ▟█████           Heated seats in your BMW? Monthly fee.         │
+│ ██  ██ ██    ██  ██           iPhone a bit old? e-Waste.                     │
+│ ██████ ██    ██████           AI Note taker? Dicataphone with a crap app.    │
+│ ██  ██ ██    ██  ██           No more updates? Painful UI? Cope.             │
+│ ██  ██ ████▄ ██  █▛                                                          │
+│                               Fuck. You. Fuck your locks.                    │
+│ Hardware Liberation Army      We're taking it back. Old-Skool.               │
+│                                                                              │
+│                                                                              │
+│ For years we have put up with locked down hardware that we don't own.        │
+│ A brave few have managed to crack them, but until now, it's been expensive   │
+│ and slow to do. AI changes the game - what once took months can now take days│
+│ Hardware with shit software that we would previously just suffer because the │
+│ effort wasn't worth it - no more!                                            │
+│ Let's get rid of those subscriptions. Let's own our hardware again.          │
+│ From the big to the small.                                                   │
+│                                                                              │
+│ HLA Aims to aid you in busting open your locked hardware.                    │
+│                                                                    // Oct 26 │
+│              ░▒▓█ FORWARD COMRADES █▓▒░                                      │
+╰────────────────────────────────────────────────────────────────────────[HLA]─╯`,
+  },
+  {
+    title: "RELEASE",
+    nfo:
+`╭─[plaude-hla 1.0]────────────────────────────────────────────────────────────╮
+│                                                                             │
+│   ██████╗ ██╗      █████╗ ██╗   ██╗██████╗ ███████╗                         │
+│   ██╔══██╗██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝                         │
+│   ██████╔╝██║     ███████║██║   ██║██║  ██║█████╗                           │
+│   ██╔═══╝ ██║     ██╔══██║██║   ██║██║  ██║██╔══╝                           │
+│   ██║     ███████╗██║  ██║╚██████╔╝██████╔╝███████╗                         │
+│   ╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝                         │
+│                                                                             │
+│   Open interoperability tooling + docs for the Plaud Note Pro.              │
+│                                                                             │
+│   Reverse-engineered BLE protocol documentation.                            │
+│   Canonical Python toolkit. A Go demo (aplaud).                             │
+│                                                                             │
+│   No subscriptions. No locks. Own your hardware.                            │
+│                                                                             │
+│                    ░▒▓█ FORWARD COMRADES █▓▒░                               │
+╰───────────────────────────────────────────────────────────────────────[HLA]─╯`,
+  },
+];
+
+/* ============================================================
+   DOM refs
+   ============================================================ */
+const nfoEl   = document.getElementById("nfo");
+const fxCanvas= document.getElementById("fx");
+const fxCtx   = fxCanvas.getContext("2d");
+const scCanvas= document.getElementById("scroller");
+const scCtx   = scCanvas.getContext("2d");
+
+let sceneIndex = 0;
+let transitioning = false;
+
+/* ---------- render a scene ---------- */
+function renderScene(i, fit=true){
+  sceneIndex = ((i % scenes.length) + scenes.length) % scenes.length;
+  nfoEl.textContent = scenes[sceneIndex].nfo;
+  if(fit) fitNfo();
+}
+
+/* ---------- auto-fit the .nfo text into the stage ---------- */
+function fitNfo(){
+  const stage = document.getElementById("stage");
+  const lines = scenes[sceneIndex].nfo.split("\n");
+  const longest = Math.max(...lines.map(l => l.length));
+  const availW = Math.max(120, stage.clientWidth - 52);
+  const availH = Math.max(60,  stage.clientHeight - 44);
+  let size = Math.min(18, availW / (longest * 0.62));
+  // respect height too
+  const estHeight = lines.length * size * 1.2;
+  if(estHeight > availH){ size = Math.max(6, availH / (lines.length * 1.2)); }
+  nfoEl.style.fontSize = size.toFixed(1) + "px";
+}
+
+/* ============================================================
+   Pixel fade (constrained to the middle .nfo section)
+   ============================================================ */
+let fxW = 0, fxH = 0;
+
+function resizeFx(){
+  // Anchor to the stable middle section (not the .nfo panel, whose size/position
+  // changes when the scene swaps) so the reveal always un-pixels in place.
+  const r = document.querySelector("main").getBoundingClientRect();
+  fxW = Math.max(10, Math.floor(r.width));
+  fxH = Math.max(10, Math.floor(r.height));
+  fxCanvas.style.left   = r.left + "px";
+  fxCanvas.style.top    = r.top  + "px";
+  fxCanvas.style.width  = fxW + "px";
+  fxCanvas.style.height = fxH + "px";
+  fxCanvas.width  = fxW * devicePixelRatio;
+  fxCanvas.height = fxH * devicePixelRatio;
+  fxCtx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+}
+
+// Fill random pastel cells until the whole .nfo panel is covered → resolve.
+function coverCells(cell){
+  return new Promise(resolve=>{
+    const cols = Math.ceil(fxW / cell);
+    const rows = Math.ceil(fxH / cell);
+    const total = cols * rows;
+    let drawn = new Set();
+    function frame(){
+      const perFrame = Math.max(6, Math.round(total / FADE.speed));
+      for(let k=0;k<perFrame;k++){
+        const idx = Math.floor(Math.random()*total);
+        if(drawn.has(idx)) continue;
+        drawn.add(idx);
+        const x=(idx%cols)*cell, y=Math.floor(idx/cols)*cell;
+        const c=PALETTE.fade[Math.floor(Math.random()*PALETTE.fade.length)];
+        fxCtx.globalAlpha=0.92;
+        fxCtx.fillStyle=c;
+        fxCtx.fillRect(x,y,cell,cell);
+      }
+      fxCtx.globalAlpha=1;
+      if(drawn.size>=total){ resolve(); }
+      else requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  });
+}
+// Clear cells one-by-one at the same constant rate used to draw them, so the
+// reveal mirrors the cover for a smooth dissolve.
+function revealCells(cell){
+  return new Promise(resolve=>{
+    const cols = Math.ceil(fxW / cell);
+    const rows = Math.ceil(fxH / cell);
+    const total = cols * rows;
+    let filled = new Set();
+    for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) filled.add(y*cols+x);
+    const perFrame = Math.max(6, Math.round(total / FADE.speed));
+    function frame(){
+      const arr = [...filled];
+      const n = Math.min(perFrame, arr.length);
+      for(let k=0;k<n;k++){
+        const idx = arr[Math.floor(Math.random()*arr.length)];
+        const x=(idx%cols)*cell, y=Math.floor(idx/cols)*cell;
+        fxCtx.clearRect(x,y,cell,cell);
+        filled.delete(idx);
+      }
+      if(filled.size===0){ resolve(); }
+      else requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+async function transitionTo(next){
+  if(transitioning) return;
+  transitioning = true;
+  resizeFx();                                  // cover the current .nfo panel only
+  const cell = Math.max(12, Math.floor(fxW/FADE.size));
+  await coverCells(cell);                      // draw all the pixels in
+  renderScene(next);                           // swap the nfo
+  await revealCells(cell);                     // undraw all the pixels
+  fxCtx.clearRect(0,0,fxW,fxH);
+  transitioning = false;
+}
+
+/* ============================================================
+   Sine scroller (footer) — tune these values to taste.
+   ============================================================ */
+const SCROLLER = {
+  /* Try changing wavelength & amp first: */
+  text:  "New school techniques, old school vibes. We never got to play in the scene before, maybe we'll be rejected now - but who cares, this is for the people. SEEKING: Coders, Muscians, Artists, Testers, Hardware to crack...                                                       HLA Proudly presents - plaude! Fuck your shitty app, subscription fees and locked hardware! Props to your hardware design guys though - this box is seeexxxxxy.                  If you like this product...                                    consider stealing it.                                      Pocket.... I've got my eye on you.                                                                  Cheese is very important. <3 Cheddar.                               To the moon!                               >>>> FORWARD COMRADES!!! >>>>                ",
+  speed: 130,        // horizontal scroll speed (px/sec)
+  wavelength: 300,   // px per sine cycle — HIGHER = wider/looser waves, LOWER = tighter
+  amp: 24,           // wave amplitude (px) — HIGHER = taller bobbing
+  phase: 6,          // extra temporal wave speed (rad/s); 0 = wave frozen to the text
+  size: 34,          // glyph size (px), auto-clamped to fit the section
+  color: "#5b4a78",
+  accent:"#ff8fc7",
+};
+let scrollTime = 0;
+
+function resizeScroller(){
+  scCanvas.width  = scCanvas.clientWidth  * devicePixelRatio;
+  scCanvas.height = scCanvas.clientHeight * devicePixelRatio;
+  scCtx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+
+function drawScroller(){
+  const w = scCanvas.clientWidth, h = scCanvas.clientHeight;
+  scCtx.clearRect(0,0,w,h);
+  // Glyph size auto-clamps to fit the section; everything else is from SCROLLER.
+  const size = Math.min(SCROLLER.size, h*0.7);
+  const cw = size * 0.62;
+  const mid = h/2;
+  const msg = SCROLLER.text;
+  const msgW = msg.length * cw;
+  const gap  = 5 * cw;                       // spacing between repeats
+  const span = msgW + gap;
+  const offset = (scrollTime * SCROLLER.speed) % span;
+  const head = -offset;
+
+  scCtx.font = `700 ${size}px "DejaVu Sans Mono",monospace`;
+  for(let k=-1; k*span + head < w + cw; k++){
+    const start = head + k*span;
+    for(let i=0;i<msg.length;i++){
+      const gx = start + i*cw;
+      if(gx > w + cw) break;
+      if(gx < -cw) continue;
+      const y = mid + Math.sin((gx / SCROLLER.wavelength) * Math.PI*2
+                               + scrollTime * SCROLLER.phase) * SCROLLER.amp;
+      scCtx.fillStyle = (msg[i]==='·') ? SCROLLER.accent : SCROLLER.color;
+      scCtx.fillText(msg[i], gx, y + size*0.30);
+    }
+  }
+  scrollTime += 1/60;
+  requestAnimationFrame(drawScroller);
+}
+
+/* ============================================================
+   Scene cycling (keyboard + auto)
+   ============================================================ */
+document.addEventListener("keydown", (e)=>{
+  if(e.code === "Space" || e.key === "ArrowRight"){ e.preventDefault(); transitionTo(sceneIndex+1); }
+  if(e.key === "ArrowLeft"){ e.preventDefault(); transitionTo(sceneIndex-1); }
+});
+// Auto-advance to the next .nfo scene after a while.
+let autoTimer = setTimeout(()=> transitionTo(sceneIndex+1), 16000);
+
+/* ============================================================
+   Boot
+   ============================================================ */
+function onResize(){ resizeFx(); resizeScroller(); fitNfo(); }
+window.addEventListener("resize", onResize);
+
+renderScene(0);
+resizeFx(); resizeScroller();
+requestAnimationFrame(drawScroller);
+</script>
+</body>
+</html>

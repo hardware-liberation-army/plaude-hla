@@ -1,0 +1,60 @@
+// BLE Service and Characteristic UUIDs and protocol constants.
+// Source: https://github.com/naeemarsalan/opendict
+
+export const PLAUD_SERVICE_UUID = '00001910-0000-1000-8000-00805f9b34fb';
+export const NOTIFY_CHAR_UUID = '00002bb0-0000-1000-8000-00805f9b34fb';
+export const WRITE_CHAR_UUID = '00002bb1-0000-1000-8000-00805f9b34fb';
+export const BATTERY_SERVICE_UUID = '0000180f-0000-1000-8000-00805f9b34fb';
+export const BATTERY_CHAR_UUID = '00002a19-0000-1000-8000-00805f9b34fb';
+export const CCCD_UUID = '00002902-0000-1000-8000-00805f9b34fb';
+
+export const MANUFACTURER_CODES = [93, 712, 880, 881, 882, 888];
+
+export const CMD = {
+  HANDSHAKE: 0x01,
+  GET_SSN: 0x02,
+  GET_DEVICE_STATUS: 0x03,
+  SYNC_TIME: 0x04,
+  RECORD_SWITCH: 0x05,
+  GET_DEVICE_INFO: 0x09,
+  GET_FILE_LIST: 0x0a,
+  GET_STORAGE_INFO: 0x0d,
+  FILE_SYNC_PREPARE: 0x14,
+  FILE_SYNC_START: 0x15,
+  FILE_SYNC_STOP: 0x16,
+  FILE_SYNC_CONFIG: 0x17,
+  DELETE_FILE: 0x18,
+  SYNC_FILE_HEAD: 0x1c,
+  SYNC_FILE_TAIL: 0x1d,
+  PRE_HANDSHAKE: 0xfe10,
+  PRE_HANDSHAKE_NEW: 0xfe20,
+  PRE_HANDSHAKE_CNF: 0xfe11,
+  SEND_RSA_PUBKEY: 0xfe12,
+} as const;
+
+export const PACKET_TYPE = {
+  COMMAND: 0x01,
+  FILE_DATA: 0x02,
+  FILE_DATA_ALT: 0x03,
+  FILE_DATA_ALT2: 0x05,
+} as const;
+
+export const EMPTY_PACKAGE_OFFSET = 0x0000ffff;
+export const CONNECTION_TIMEOUT_MS = 30000;
+export const HANDSHAKE_TIMEOUT_MS = 10000;
+export const SYNC_TIME_RETRY_COUNT = 3;
+export const CHUNK_SIZE = 100;
+export const MTU_INDICATOR = new Uint8Array([0x02, 0x00]);
+
+export const STREAMING_COMMANDS = new Set([
+  0x08, 0x0b, 0x13, 0x14, 0x1a, 0x1c, 0x23, 0x32, 0x34, 0x3d, 0x8f,
+]);
+
+export const HANDSHAKE_STATUS = {
+  SUCCESS: 0,
+  TOKEN_NOT_MATCH: 1,
+  RECORDING_NOW: 2,
+  USER_REFUSE: 3,
+  SSN_FAILED: 4,
+  MODE_NOT_MATCH: 255,
+} as const;

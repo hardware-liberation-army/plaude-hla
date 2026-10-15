@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plaud-toolkit"
+version = "0.1.0"
+description = "Plaud Note Pro BLE interoperability toolkit (reverse-engineered protocol)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Hardware Liberation License" }
+dependencies = [
+    "bleak",
+    "cryptography",
+    "requests",
+    "opuslib",
+    "numpy",
+]
+
+[project.scripts]
+plaud = "plaud.cli:main"
+
+[tool.setuptools]
+packages = ["plaud"]
+
+[tool.setuptools.package-data]
+plaud = ["py.typed"]
