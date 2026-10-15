@@ -1,3 +1,18 @@
+```
+╭─[plaude-hla]────────────────────────────────────────────────────────────────╮
+│                                                                             │
+│   ██████╗ ██╗      █████╗ ██╗   ██╗██████╗ ███████╗                         │
+│   ██╔══██╗██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝                         │
+│   ██████╔╝██║     ███████║██║   ██║██║  ██║█████╗                           │
+│   ██╔═══╝ ██║     ██╔══██║██║   ██║██║  ██║██╔══╝                           │
+│   ██║     ███████╗██║  ██║╚██████╔╝██████╔╝███████╗                         │
+│   ╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝                         │
+│                                                                             │
+│   No subscriptions. No locks. Own your hardware.                            │
+│                    ░▒▓█ FORWARD COMRADES █▓▒░                               │
+╰───────────────────────────────────────────────────────────────────────[HLA]─╯
+```
+
 # Plaud Note Pro — Open Interoperability Project
 
 Reverse-engineered, open documentation and tooling for the **Plaud Note Pro**
@@ -19,8 +34,7 @@ playable audio — without the vendor's app, subscriptions, or cloud lock-in.
 | [`toolkit/`](toolkit/) | **The canonical implementation.** A Python package (`plaud`) that talks to the device over BLE and decrypts recordings. |
 | [`demos/aplaud/`](demos/aplaud/) | **Demo app.** A Go CLI/TUI (`aplaud`) that shows the full download → decrypt → transcribe pipeline. Useful as a worked example of the protocol. |
 | [`research/`](research/) | Decompiled source fragments (`opendict_source`) used to derive the protocol spec. |
-| [`third_party/`](third_party/) | Vendored/proprietary material (official Plaud SDK, firmware images) kept for reference and interoperability research. |
-| [`archive/plaud-web/`](archive/plaud-web/) | An older browser (WebBluetooth) implementation of the protocol, kept for reference. |
+| [`third_party/`](third_party/) | Vendored firmware image and third-party notices. The official Plaud SDK is **not** vendored in this release (excluded via `.gitignore`); see [`third_party/NOTICE.md`](third_party/NOTICE.md). |
 
 ## Quick start
 
